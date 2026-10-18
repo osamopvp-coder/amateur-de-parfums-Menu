@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="html-root">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AMATEUR DE PARFUMS | منيو أسعار الزيوت العطرية الخام</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        @import url('https://fonts.cdnfonts.com/css/trajan-pro');
+        * { box-sizing: border-box; }
+        body { font-family: 'Tajawal', sans-serif; overflow-x: hidden; width: 100%; margin: 0; padding: 0; transition: background 0.4s ease, color 0.4s ease; position: relative; }
+
+        body.dark-theme { background-color: #071410; color: #f4efea; }
+        body.light-theme { background-color: #fcfbf7; color: #112218; }
+
+        #gold-particles-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 1; opacity: 0.85;
+        }
+
+        .modern-header, main, footer { position: relative; z-index: 10; }
+
+        .modern-header {
+            background: rgba(7, 20, 16, 0.98);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.25);
+            position: sticky; top: 0; z-index: 50;
+        }
+        body.light-theme .modern-header {
+            background: rgba(252, 251, 247, 0.98);
+            border-bottom: 1px solid rgba(197, 155, 39, 0.3);
+        }
+
+        .pure-gold-text { color: #d4af37 !important; font-family: 'Trajan Pro', serif; }
+        .trajan-font { font-family: 'Trajan Pro', serif; }
+
+        .luxury-card {
+            background: rgba(15, 30, 24, 0.6);
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            backdrop-filter: blur(10px);
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        body.light-theme .luxury-card {
+            background: #ffffff; border: 1px solid rgba(197, 155, 39, 0.3); box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+        }
+
+        button, a { transition: transform 0.15s ease, background 0.3s ease, box-shadow 0.3s ease; position: relative; z-index: 25; cursor: pointer; }
+        button:active, a:active { transform: scale(0.96); }
+
+        .luxury-btn { background: transparent; border: 1px solid #d4af37; color: #d4af37; }
+        .luxury-btn:hover { background: #d4af37; color: #071410; }
+
+        .circle-icon-btn {
+            background: transparent; border: none; width: 38px; height: 38px; min-width: 38px;
+            border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center;
+            padding: 0; box-shadow: 0 0 10px rgba(212, 175, 55, 0.3); text-decoration: none; cursor: pointer; font-size: 16px;
+        }
+        @media (min-width: 768px) { .circle-icon-btn { width: 42px; height: 42px; min-width: 42px; } }
+        .circle-icon-btn:hover { transform: scale(1.12); box-shadow: 0 0 18px rgba(212, 175, 55, 0.9); }
+
+        .royal-admin-icon-btn {
+            background: transparent; border: 2px solid rgba(212, 175, 55, 0.4); cursor: pointer;
+            width: 38px; height: 38px; min-width: 38px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; padding: 0;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.2); color: #a18a35; text-decoration: none;
+            transition: all 0.4s ease;
+        }
+        .royal-admin-icon-btn.logged-in {
+            background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7);
+            border-color: #ffe680; color: #071410; box-shadow: 0 0 25px rgba(212, 175, 55, 0.8);
+        }
+        @media (min-width: 768px) { .royal-admin-icon-btn { width: 42px; height: 42px; min-width: 42px; } }
+        .royal-admin-icon-btn:hover { transform: scale(1.12); }
+
+        .live-search-dropdown {
+            position: absolute; top: 100%; right: 0; left: 0; margin-top: 8px;
+            background: rgba(7, 20, 16, 0.98); border: 1px solid rgba(212, 175, 55, 0.4);
+            backdrop-filter: blur(16px); border-radius: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.8);
+            z-index: 100; max-height: 280px; overflow-y: auto; display: none;
+        }
+        .live-search-item {
+            display: flex; align-items: center; gap: 12px; padding: 10px 14px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.15); cursor: pointer; transition: background 0.2s ease;
+        }
+        .live-search-item:hover { background: rgba(212, 175, 55, 0.15); }
+        .live-search-item img { width: 38px; height: 38px; border-radius: 8px; object-fit: cover; }
+
+        .royal-save-btn {
+            background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7);
+            color: #071410; border: 2px solid #ffe680; border-radius: 1rem; padding: 1rem;
+            font-weight: 900; font-size: 15px; text-transform: uppercase;
+            box-shadow: 0 6px 25px rgba(212, 175, 55, 0.5); cursor: pointer; width: 100%; text-align: center;
+        }
+        .royal-save-btn:hover { transform: scale(1.02); box-shadow: 0 8px 30px rgba(212, 175, 55, 0.8); }
+
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(3, 10, 8, 0.85); backdrop-filter: blur(12px);
+            z-index: 200; display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.4s ease; padding: 1rem;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-box {
+            background: linear-gradient(145deg, #0a1f18, #050e0b); border: 2px solid rgba(212, 175, 55, 0.6); border-radius: 2rem;
+            width: 100%; max-width: 420px; padding: 2rem 1.5rem; box-shadow: 0 30px 60px rgba(0,0,0,0.9);
+            transform: translateY(40px) scale(0.98); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative; z-index: 210;
+        }
+        .modal-overlay.active .modal-box { transform: translateY(0) scale(1); }
+
+        @keyframes pageCinematicEnter {
+            0% { opacity: 0; transform: scale(0.95) translateY(25px) rotateX(8deg); filter: blur(6px); }
+            100% { opacity: 1; transform: scale(1) translateY(0) rotateX(0deg); filter: blur(0px); }
+        }
+        .view-enter { animation: pageCinematicEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    </style>
+</head>
+<body class="dark-theme min-h-screen" id="html-root">
+
+    <canvas id="gold-particles-canvas"></canvas>
+
+    <header class="modern-header">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-6 flex items-center justify-between relative">
+            <div class="flex items-center gap-2">
+                <button class="circle-icon-btn" onclick="toggleTheme()" title="تغيير المظهر"><span id="theme-icon">🌙</span></button>
+                <!-- زر أعلام الدول لتغيير اللغة (علم الجزائر للغة العربية، علم فرنسا للغة الفرنسية) -->
+                <button class="circle-icon-btn border border-amber-500/40" onclick="toggleLanguage()" title="Changer de langue"><span id="lang-flag-icon">🇩🇿</span></button>
+            </div>
+
+            <div class="text-center cursor-pointer flex flex-col items-center justify-center z-30" onclick="showHomePage()">
+                <div class="h-12 w-12 sm:h-16 sm:w-16 mb-1 rounded-full overflow-hidden border-2 border-amber-400 bg-black flex items-center justify-center shadow-2xl">
+                    <img src="LOGO.jpg" alt="Logo" class="h-full w-full object-cover" onerror="this.src='https://placehold.co/120x120/011c16/d4af37?text=AP'">
+                </div>
+                <!-- هذا العنوان يبقى كما هو دون تغيير بلغتين -->
+                <div class="text-[10px] sm:text-xs font-black tracking-[0.2em] uppercase pure-gold-text trajan-font">AMATEUR DE PARFUMS (DIGITAL MENU)</div>
+                <div id="header-subtitle" class="text-[7px] md:text-[9px] font-bold tracking-[0.15em] uppercase text-amber-300">قائمة أسعار الزيوت العطرية الخام بالكيلوغرام</div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button id="admin-header-btn" onclick="openAdminDashboard()" class="royal-admin-icon-btn" title="لوحة تحكم الأونر">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/></svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main id="home-view" class="max-w-7xl mx-auto px-3 sm:px-4 py-8 view-enter">
+        <div class="text-center mb-6 space-y-2">
+            <h1 id="home-title" class="text-xl sm:text-3xl font-black pure-gold-text trajan-font">قائمة العطور وأسعار الزيوت الخام</h1>
+            <p id="home-subtitle" class="text-xs sm:text-sm text-amber-200 opacity-80">اختر العطر للاطلاع على تفاصيله وأسعار الكيلوغرام لمختلف درجات الجودة.</p>
+        </div>
+
+        <!-- خانة البحث مع القائمة المنسدلة السفلية الفخمة -->
+        <div class="max-w-md mx-auto mb-8 relative">
+            <input type="text" id="menu-search-input" oninput="onLiveSearchInput()" placeholder="ابحث عن العطر أو الماركة..." class="w-full border border-amber-500/40 rounded-full px-5 py-3 text-xs bg-black/40 text-white focus:outline-none focus:border-amber-400 shadow-lg text-center">
+            <div id="live-search-dropdown" class="live-search-dropdown"></div>
+        </div>
+
+        <div id="perfumes-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"></div>
+        <div id="no-results" class="hidden text-center py-20 opacity-60 text-xs uppercase">لا توجد عطور مطابقة.</div>
+    </main>
+
+    <main id="product-detail-view" class="max-w-4xl mx-auto px-3 sm:px-4 py-8 hidden view-enter font-sans">
+        <div class="mb-6"><button onclick="showHomePage()" id="detail-back-btn" class="text-xs luxury-btn px-4 py-2 rounded-full font-bold">← العودة للقائمة الرئيسية</button></div>
+        <div class="luxury-card p-6 md:p-10 rounded-2xl shadow-2xl space-y-8">
+            <div class="flex flex-col md:flex-row gap-8 items-center border-b border-amber-500/20 pb-8">
+                <div class="w-56 h-56 sm:w-64 sm:h-64 rounded-2xl overflow-hidden bg-black flex items-center justify-center border-2 border-amber-500/50 shadow-2xl relative flex-shrink-0">
+                    <img id="detail-img" src="" class="w-full h-full object-cover">
+                </div>
+                <div class="text-center md:text-right space-y-3 flex-grow">
+                    <h2 id="detail-name" class="text-2xl sm:text-4xl font-black pure-gold-text trajan-font"></h2>
+                    <p id="detail-brand" class="text-xs sm:text-sm text-amber-400 font-mono uppercase tracking-widest"></p>
+                    <p id="detail-desc" class="text-xs sm:text-sm opacity-90 leading-relaxed font-light"></p>
+                </div>
+            </div>
+
+            <div id="grades-section-wrapper" class="space-y-4 hidden">
+                <label id="grades-label" class="block font-bold text-amber-300 text-xs uppercase tracking-wider">اختر درجة الجودة والنقاوة للزيت الخام:</label>
+                <div id="kg-grades-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3"></div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row items-center justify-between pt-6 border-t border-amber-500/20 gap-4">
+                <span id="price-label" class="block text-xs uppercase tracking-wider opacity-80">سعر الزيت العطري الخام:</span>
+                <div class="text-xl md:text-2xl font-black text-amber-400 font-mono">
+                    <span id="selected-kg-price">0</span> <span id="price-unit-label">دج / كغ</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <main id="admin-view" class="max-w-4xl mx-auto px-3 sm:px-4 py-8 hidden view-enter font-sans">
+        <div class="flex items-center justify-between border-b border-amber-500/20 pb-4 mb-6">
+            <h2 id="admin-title" class="text-lg font-bold pure-gold-text trajan-font">👑 لوحة التحكم - تعديل أسعار الكيلوغرام</h2>
+            <div class="flex gap-2">
+                <button onclick="ownerLogout()" id="admin-logout-btn" class="text-red-400 text-xs font-bold luxury-btn px-3 py-1.5 rounded-xl">خروج ✕</button>
+                <button onclick="showHomePage()" id="admin-back-home-btn" class="royal-nav-btn text-xs px-4 py-1.5 rounded-xl">← العودة للمنيو</button>
+            </div>
+        </div>
+        <div class="mb-4"><input type="text" id="admin-search-perfume" oninput="renderAdminKgList()" placeholder="ابحث عن العطر..." class="w-full border border-amber-500/30 rounded-full px-4 py-2.5 text-xs bg-black/40 text-white"></div>
+        <div id="admin-kg-list-container" class="space-y-4"></div>
+    </main>
+
+    <main id="admin-edit-kg-view" class="max-w-4xl mx-auto px-3 sm:px-4 py-8 hidden view-enter font-sans">
+        <div class="flex items-center justify-between border-b border-amber-500/20 pb-4 mb-6">
+            <h2 class="text-lg font-bold pure-gold-text trajan-font" id="edit-view-title">تعديل أسعار الكيلوغرام للعطر</h2>
+            <button onclick="openAdminDashboard()" id="edit-back-list-btn" class="royal-nav-btn text-xs px-4 py-2">← العودة للقائمة</button>
+        </div>
+        <form onsubmit="saveKgPerfumeEdit(event)" class="luxury-card p-6 md:p-8 rounded-3xl space-y-6 text-xs max-w-2xl mx-auto shadow-2xl">
+            <input type="hidden" id="edit-kg-id">
+            <div class="space-y-2">
+                <label id="edit-base-label" class="block font-bold text-amber-300 text-sm">سعر الكيلوغرام الأساسي (دج / 1 كغ):</label>
+                <input type="number" id="edit-kg-base-price" required class="w-full border border-amber-500/40 rounded-xl p-3 bg-black/60 text-white font-mono text-center text-sm">
+            </div>
+            <div class="space-y-3 pt-2 border-t border-amber-500/20">
+                <label id="edit-grades-label" class="block font-bold text-amber-300 text-sm">تحديد أسعار الكيلوغرام لكل درجة جودة مفعلة:</label>
+                <div id="edit-kg-grades-prices-container" class="space-y-3 pt-1"></div>
+            </div>
+            <div class="pt-4"><button type="submit" id="edit-save-btn" class="royal-save-btn">حفظ التغييرات في السحابة ✨</button></div>
+        </form>
+    </main>
+
+    <div id="owner-auth-modal" class="modal-overlay" onclick="if(event.target === this) closeAuthModalToHome()">
+        <div class="modal-box relative" onclick="event.stopPropagation()">
+            <button onclick="closeAuthModalToHome()" class="absolute top-4 left-4 text-amber-300 text-lg font-bold cursor-pointer">✕</button>
+            <div class="text-center mb-6">
+                <h3 id="modal-title" class="text-xl font-black pure-gold-text trajan-font mb-1">تسجيل دخول الآونر</h3>
+                <p id="modal-subtitle" class="text-xs opacity-75">أدخل البريد وكلمة المرور الخاصة بالإدارة</p>
+            </div>
+            <form onsubmit="handleOwnerLoginSubmit(event)" class="space-y-4 text-xs">
+                <div><input type="email" id="owner-email" required placeholder="البريد الإلكتروني للإدارة" class="w-full border border-amber-500/30 rounded-xl p-3 bg-black/40 text-white"></div>
+                <div><input type="password" id="owner-password" required placeholder="كلمة المرور" class="w-full border border-amber-500/30 rounded-xl p-3 bg-black/40 text-white"></div>
+                <button type="submit" id="modal-submit-btn" class="royal-save-btn py-3 mt-2 text-sm">دخول للوحة التحكم ⚡</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed bottom-6 right-6 z-50 bg-[#071410]/95 border border-amber-400 text-amber-300 px-6 py-3 rounded-2xl font-bold shadow-2xl backdrop-blur-md transition-all transform translate-y-20 opacity-0 text-xs uppercase flex items-center gap-3">
+        <span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping"></span>
+        <span id="toast-msg">تمت العملية بنجاح ✨</span>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gold-particles-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resizeCanvas); resizeCanvas();
+
+        class GoldParticle {
+            constructor() { this.reset(); }
+            reset() {
+                this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height - canvas.height;
+                this.size = Math.random() * 3 + 1; this.speedY = Math.random() * 1.2 + 0.4;
+                this.speedX = (Math.random() - 0.5) * 0.8; this.opacity = Math.random() * 0.8 + 0.2;
+            }
+            update() { this.y += this.speedY; this.x += this.speedX; if (this.y > canvas.height) this.reset(); }
+            draw() {
+                ctx.save(); ctx.globalAlpha = this.opacity; ctx.fillStyle = '#d4af37';
+                ctx.shadowBlur = 10; ctx.shadowColor = '#fef08a';
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
+                ctx.restore();
+            }
+        }
+        for (let i = 0; i < 100; i++) particles.push(new GoldParticle());
+        function animateParticles() { ctx.clearRect(0, 0, canvas.width, canvas.height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animateParticles); }
+        animateParticles();
+
+        const SUPABASE_URL = "https://zdzdbdixarwgubvzsfaw.supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable_KT6QH-AUaljl0VLviyIqXw_F8ERvIwR";
+        const supabaseClient = (typeof supabase !== 'undefined' && SUPABASE_URL.includes("http")) ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+        
+        const OWNER_CREDENTIALS = { email: "amateurdeparfums2026@gmail.com", password: "amateur2026" };
+
+        var activePerfume = null;
+        var isOwnerLoggedIn = localStorage.getItem('isOwnerLoggedIn_amateur') === 'true';
+        var currentTheme = localStorage.getItem('site_theme_amateur') || 'dark';
+        var currentLang = localStorage.getItem('site_lang_amateur') || 'ar';
+        var perfumesList = [];
+
+        const translations = {
+            ar: {
+                langFlag: "🇩🇿",
+                subtitle: "قائمة أسعار الزيوت العطرية الخام بالكيلوغرام",
+                homeTitle: "قائمة العطور وأسعار الزيوت الخام",
+                homeSub: "اختر العطر للاطلاع على تفاصيله وأسعار الكيلوغرام لمختلف درجات الجودة.",
+                searchPh: "ابحث عن العطر أو الماركة...",
+                detailsBtn: "التفاصيل ←",
+                noRes: "لا توجد عطور مطابقة.",
+                backHome: "← العودة للقائمة الرئيسية",
+                gradesLabel: "اختر درجة الجودة والنقاوة للزيت الخام:",
+                priceLabel: "سعر الزيت العطري الخام:",
+                priceUnit: "دج / كغ",
+                adminTitle: "👑 لوحة التحكم - تعديل أسعار الكيلوغرام",
+                logoutBtn: "خروج ✕",
+                backMenuBtn: "← العودة للمنيو",
+                searchAdminPh: "ابحث عن العطر...",
+                editPriceBtn: "تعديل الأسعار بالكيلو ⚙️",
+                noAdminPerfumes: "لا توجد عطور متاحة.",
+                editTitle: "تعديل أسعار الكيلوغرام للعطر",
+                editBaseLbl: "سعر الكيلوغرام الأساسي (دج / 1 كغ):",
+                editGradesLbl: "تحديد أسعار الكيلوغرام لكل درجة جودة مفعلة:",
+                saveChangesBtn: "حفظ التغييرات في السحابة ✨",
+                modalTitle: "تسجيل دخول الآونر",
+                modalSub: "أدخل البريد وكلمة المرور الخاصة بالإدارة",
+                emailPh: "البريد الإلكتروني للإدارة",
+                passPh: "كلمة المرور",
+                modalSubmit: "دخول للوحة التحكم ⚡",
+                successToast: "تمت العملية بنجاح ✨",
+                gradeText: "درجة"
+            },
+            fr: {
+                langFlag: "🇫🇷",
+                subtitle: "Liste des prix des huiles brutes au kilogramme",
+                homeTitle: "Catalogue des Parfums & Huiles Brutes",
+                homeSub: "Sélectionnez un parfum pour voir ses détails et les prix au kg selon les qualités.",
+                searchPh: "Rechercher un parfum ou une marque...",
+                detailsBtn: "Détails →",
+                noRes: "Aucun parfum trouvé.",
+                backHome: "← Retour au Catalogue",
+                gradesLabel: "Choisissez la qualité et pureté de l'huile brute :",
+                priceLabel: "Prix de l'huile essentielle brute :",
+                priceUnit: "DZD / kg",
+                adminTitle: "👑 Panneau Admin - Modification des Prix au Kg",
+                logoutBtn: "Déconnexion ✕",
+                backMenuBtn: "← Retour au Menu",
+                searchAdminPh: "Rechercher un parfum...",
+                editPriceBtn: "Modifier les prix au kg ⚙️",
+                noAdminPerfumes: "Aucun parfum disponible.",
+                editTitle: "Modifier le prix au kg du parfum",
+                editBaseLbl: "Prix de base au kilogramme (DZD / 1 kg) :",
+                editGradesLbl: "Définir les prix au kg pour chaque qualité active :",
+                saveChangesBtn: "Enregistrer dans le Cloud ✨",
+                modalTitle: "Connexion Administrateur",
+                modalSub: "Entrez l'email et le mot de passe de gestion",
+                emailPh: "Email administrateur",
+                passPh: "Mot de passe",
+                modalSubmit: "Accéder au Panneau ⚡",
+                successToast: "Opération réussie ✨",
+                gradeText: "Grade"
+            }
+        };
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('site_lang_amateur', lang);
+            const t = translations[lang];
+            document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+            document.documentElement.setAttribute('lang', lang);
+
+            document.getElementById('lang-flag-icon').textContent = t.langFlag;
+            document.getElementById('header-subtitle').textContent = t.subtitle;
+            document.getElementById('home-title').textContent = t.homeTitle;
+            document.getElementById('home-subtitle').textContent = t.homeSub;
+            document.getElementById('menu-search-input').placeholder = t.searchPh;
+            document.getElementById('no-results').textContent = t.noRes;
+            document.getElementById('detail-back-btn').textContent = t.backHome;
+            document.getElementById('grades-label').textContent = t.gradesLabel;
+            document.getElementById('price-label').textContent = t.priceLabel;
+            document.getElementById('price-unit-label').textContent = t.priceUnit;
+            document.getElementById('admin-title').textContent = t.adminTitle;
+            document.getElementById('admin-logout-btn').textContent = t.logoutBtn;
+            document.getElementById('admin-back-home-btn').textContent = t.backMenuBtn;
+            document.getElementById('admin-search-perfume').placeholder = t.searchAdminPh;
+            document.getElementById('edit-base-label').textContent = t.editBaseLbl;
+            document.getElementById('edit-grades-label').textContent = t.editGradesLbl;
+            document.getElementById('edit-save-btn').textContent = t.saveChangesBtn;
+            document.getElementById('modal-title').textContent = t.modalTitle;
+            document.getElementById('modal-subtitle').textContent = t.modalSub;
+            document.getElementById('owner-email').placeholder = t.emailPh;
+            document.getElementById('owner-password').placeholder = t.passPh;
+            document.getElementById('modal-submit-btn').textContent = t.modalSubmit;
+
+            renderPerfumesGrid();
+        }
+
+        function toggleLanguage() { setLanguage(currentLang === 'ar' ? 'fr' : 'ar'); }
+
+        function updateAdminHeaderButton() {
+            const btn = document.getElementById('admin-header-btn');
+            if(!btn) return;
+            if(isOwnerLoggedIn) btn.classList.add('logged-in');
+            else btn.classList.remove('logged-in');
+        }
+
+        function applyTheme() {
+            const body = document.body;
+            const themeIcon = document.getElementById('theme-icon');
+            if(currentTheme === 'light') { body.classList.remove('dark-theme'); body.classList.add('light-theme'); if(themeIcon) themeIcon.innerHTML = '☀️'; }
+            else { body.classList.remove('light-theme'); body.classList.add('dark-theme'); if(themeIcon) themeIcon.innerHTML = '🌙'; }
+            localStorage.setItem('site_theme_amateur', currentTheme);
+        }
+        function toggleTheme() { currentTheme = currentTheme === 'dark' ? 'light' : 'dark'; applyTheme(); }
+
+        function switchView(viewId) {
+            ['home-view', 'product-detail-view', 'admin-view', 'admin-edit-kg-view'].forEach(id => {
+                const el = document.getElementById(id); if(el) el.classList.add('hidden');
+            });
+            const view = document.getElementById(viewId);
+            if(view) { view.classList.remove('hidden'); view.classList.remove('view-enter'); void view.offsetWidth; view.classList.add('view-enter'); }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showHomePage() { switchView('home-view'); }
+
+        function openAdminDashboard() {
+            if (isOwnerLoggedIn) {
+                switchView('admin-view');
+                renderAdminKgList();
+            } else {
+                document.getElementById('owner-auth-modal').classList.add('active');
+            }
+        }
+
+        function closeAuthModalToHome() {
+            document.getElementById('owner-auth-modal').classList.remove('active');
+            showHomePage();
+        }
+
+        function handleOwnerLoginSubmit(e) {
+            e.preventDefault();
+            const email = document.getElementById('owner-email').value.trim().toLowerCase();
+            const pass = document.getElementById('owner-password').value;
+            if(email === OWNER_CREDENTIALS.email && pass === OWNER_CREDENTIALS.password) {
+                isOwnerLoggedIn = true;
+                localStorage.setItem('isOwnerLoggedIn_amateur', 'true');
+                document.getElementById('owner-auth-modal').classList.remove('active');
+                updateAdminHeaderButton();
+                showToast(translations[currentLang].successToast);
+                switchView('admin-view');
+                renderAdminKgList();
+            } else { alert("بيانات الآونر غير صحيحة."); }
+        }
+
+        function ownerLogout() {
+            isOwnerLoggedIn = false;
+            localStorage.removeItem('isOwnerLoggedIn_amateur');
+            updateAdminHeaderButton();
+            showHomePage();
+            showToast("تم تسجيل الخروج بنجاح");
+        }
+
+        async function syncPerfumesFromCloud() {
+            if (!supabaseClient) { renderPerfumesGrid(); return; }
+            try {
+                const { data, error } = await supabaseClient.from('amateur_perfumes').select('*');
+                if (error) throw error;
+                if (data && data.length > 0) {
+                    perfumesList = data.filter(item => item.in_stock !== false).map(item => {
+                        let parsedGrades = item.grades || {};
+                        if (typeof parsedGrades === 'string') { try { parsedGrades = JSON.parse(parsedGrades); } catch(e) {} }
+                        let parsedImages = item.images || ["shop1.jpg", "shop2.jpg", "shop3.jpg"];
+                        if (typeof parsedImages === 'string') { try { parsedImages = JSON.parse(parsedImages); } catch(e) {} }
+                        if (!Array.isArray(parsedImages) && typeof parsedImages === 'object') { parsedImages = Object.values(parsedImages); }
+                        return {
+                            id: item.id, name: item.name || 'عطر فاخر', brand: item.brand || '',
+                            baseKgPrice: item.base_kg_price || 12000, grades: parsedGrades,
+                            desc: item.description || '', images: parsedImages
+                        };
+                    });
+                }
+                renderPerfumesGrid();
+            } catch (e) { renderPerfumesGrid(); }
+        }
+
+        // دالة البحث الفوري مع قائمة منسدلة سفلية (Live Search Dropdown)
+        function onLiveSearchInput() {
+            const query = (document.getElementById('menu-search-input')?.value || '').toLowerCase().trim();
+            const dropdown = document.getElementById('live-search-dropdown');
+            if(!dropdown) return;
+
+            renderPerfumesGrid(); // تحديث الشبكة الأساسية أيضاً
+
+            if(query.length === 0) { dropdown.style.display = 'none'; return; }
+            const matched = perfumesList.filter(item => item.name.toLowerCase().includes(query) || (item.brand && item.brand.toLowerCase().includes(query)));
+
+            if(matched.length === 0) { dropdown.style.display = 'none'; return; }
+            dropdown.style.display = 'block';
+            dropdown.innerHTML = matched.map(item => `
+                <div class="live-search-item" onclick="selectLiveSearchResult(${item.id})">
+                    <img src="${item.images[0]}" onerror="this.src='https://placehold.co/40x40/011c16/d4af37?text=AP'">
+                    <div>
+                        <div class="font-bold text-xs text-amber-300 trajan-font">${item.name}</div>
+                        <div class="text-[10px] opacity-75 font-mono">${item.baseKgPrice || 12000} ${translations[currentLang].priceUnit}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectLiveSearchResult(id) {
+            const dropdown = document.getElementById('live-search-dropdown');
+            if(dropdown) dropdown.style.display = 'none';
+            document.getElementById('menu-search-input').value = '';
+            goToMenuDetailPage(id);
+        }
+
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('live-search-dropdown');
+            const searchInput = document.getElementById('menu-search-input');
+            if(dropdown && searchInput && !searchInput.contains(e.target) && !dropdown.contains(e.target)) dropdown.style.display = 'none';
+        });
+
+        function renderPerfumesGrid() {
+            const grid = document.getElementById('perfumes-grid');
+            const noRes = document.getElementById('no-results');
+            const searchVal = (document.getElementById('menu-search-input')?.value || '').toLowerCase().trim();
+            if(!grid) return;
+
+            const filtered = perfumesList.filter(item => item.name.toLowerCase().includes(searchVal) || (item.brand && item.brand.toLowerCase().includes(searchVal)));
+
+            if(filtered.length === 0) { grid.innerHTML = ''; if(noRes) noRes.classList.remove('hidden'); }
+            else {
+                if(noRes) noRes.classList.add('hidden');
+                grid.innerHTML = filtered.map(item => `
+                    <div class="luxury-card rounded-2xl overflow-hidden flex flex-col justify-between p-4 shadow-sm group cursor-pointer" onclick="goToMenuDetailPage(${item.id})">
+                        <div class="h-44 sm:h-52 bg-black mb-3 overflow-hidden rounded-xl flex items-center justify-center relative">
+                            <img src="${item.images[0]}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://placehold.co/300x400/011c16/d4af37?text=Perfume'">
+                        </div>
+                        <div class="space-y-1">
+                            <h4 class="text-xs sm:text-sm font-black text-amber-200 trajan-font">${item.name}</h4>
+                            <div class="text-[10px] text-amber-400 font-mono">${item.brand || ''}</div>
+                            <div class="pt-2 border-t border-amber-500/10 flex justify-between items-center">
+                                <span class="text-[11px] font-mono font-bold text-amber-300">${item.baseKgPrice || 12000} ${translations[currentLang].priceUnit}</span>
+                                <button class="text-[10px] luxury-btn px-3 py-1 rounded-full font-bold">${translations[currentLang].detailsBtn}</button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function goToMenuDetailPage(id) {
+            activePerfume = perfumesList.find(p => p.id === id);
+            if(!activePerfume) return;
+            document.getElementById('detail-name').textContent = activePerfume.name;
+            document.getElementById('detail-brand').textContent = activePerfume.brand || 'AMATEUR DE PARFUMS';
+            document.getElementById('detail-desc').textContent = activePerfume.desc;
+            document.getElementById('detail-img').src = activePerfume.images[0] || 'shop1.jpg';
+            
+            renderMenuGradesSelection();
+            switchView('product-detail-view');
+        }
+
+        function renderMenuGradesSelection() {
+            const container = document.getElementById('kg-grades-container');
+            const wrapper = document.getElementById('grades-section-wrapper');
+            if(!container || !wrapper || !activePerfume) return;
+
+            let activeGradesList = [];
+            const gradesObj = activePerfume.grades || {};
+            for(let i=1; i<=10; i++) {
+                const gKey = `x${i}`;
+                if(gradesObj[gKey] && gradesObj[gKey].active && gradesObj[gKey].available) {
+                    activeGradesList.push({ key: gKey, num: i, price: gradesObj[gKey].kgPrice || activePerfume.baseKgPrice || 12000 });
+                }
+            }
+
+            if (activeGradesList.length <= 1) {
+                wrapper.classList.add('hidden');
+                document.getElementById('selected-kg-price').textContent = activePerfume.baseKgPrice || 12000;
+            } else {
+                wrapper.classList.remove('hidden');
+                let html = '';
+                const t = translations[currentLang];
+                activeGradesList.forEach((g, idx) => {
+                    html += `
+                        <label class="luxury-card p-3 text-center cursor-pointer block rounded-xl">
+                            <input type="radio" name="menu_kg_grade" value="${g.key}" data-price="${g.price}" ${idx === 0 ? 'checked' : ''} onchange="updateMenuSelectedPrice()" class="hidden peer">
+                            <div class="peer-checked:ring-2 peer-checked:ring-amber-400 rounded-lg p-2">
+                                <span class="block font-bold text-sm text-amber-200">${t.gradeText} X${g.num}</span>
+                                <span class="text-xs text-amber-400 font-mono">${g.price} ${t.priceUnit}</span>
+                            </div>
+                        </label>
+                    `;
+                });
+                container.innerHTML = html;
+                updateMenuSelectedPrice();
+            }
+        }
+
+        function updateMenuSelectedPrice() {
+            const checkedRadio = document.querySelector('input[name="menu_kg_grade"]:checked');
+            const price = checkedRadio ? parseInt(checkedRadio.getAttribute('data-price')) : (activePerfume?.baseKgPrice || 12000);
+            document.getElementById('selected-kg-price').textContent = price;
+        }
+
+        function renderAdminKgList() {
+            const container = document.getElementById('admin-kg-list-container');
+            if(!container) return;
+            const query = (document.getElementById('admin-search-perfume')?.value || '').toLowerCase().trim();
+            const filtered = perfumesList.filter(p => p.name.toLowerCase().includes(query));
+            const t = translations[currentLang];
+            container.innerHTML = filtered.map(p => `
+                <div class="luxury-card p-4 rounded-2xl flex items-center justify-between text-xs">
+                    <div class="flex items-center gap-3">
+                        <img src="${p.images[0]}" class="w-12 h-12 rounded-lg object-cover">
+                        <div>
+                            <div class="font-bold text-amber-300 trajan-font">${p.name}</div>
+                            <div class="opacity-75 font-mono">${p.baseKgPrice || 12000} ${t.priceUnit}</div>
+                        </div>
+                    </div>
+                    <button onclick="loadKgPerfumeForEdit(${p.id})" class="royal-nav-btn text-[10px] px-3 py-1.5">${t.editPriceBtn}</button>
+                </div>
+            `).join('') || `<div class="opacity-60 text-center py-10">${translations[currentLang].noAdminPerfumes}</div>`;
+        }
+
+        function loadKgPerfumeForEdit(id) {
+            const p = perfumesList.find(item => item.id === id);
+            if(!p) return;
+            document.getElementById('edit-kg-id').value = p.id;
+            document.getElementById('edit-view-title').textContent = `${translations[currentLang].editTitle}: ${p.name}`;
+            document.getElementById('edit-kg-base-price').value = p.baseKgPrice || 12000;
+
+            const gradesContainer = document.getElementById('edit-kg-grades-prices-container');
+            let html = '';
+            const gradesObj = p.grades || {};
+            const t = translations[currentLang];
+            for(let i=1; i<=10; i++) {
+                const gKey = `x${i}`;
+                const gradeData = gradesObj[gKey];
+                if(gradeData && gradeData.active) {
+                    html += `
+                        <div class="luxury-card p-3.5 rounded-xl flex items-center justify-between text-xs gap-4">
+                            <span class="font-bold text-amber-300 text-sm">${t.gradeText} X${i}</span>
+                            <input type="number" name="grade-kg-price-${gKey}" value="${gradeData.kgPrice || p.baseKgPrice || 12000}" placeholder="السعر" class="border border-amber-500/40 rounded-xl p-2.5 bg-black/60 text-white font-mono w-44 text-center text-sm">
+                        </div>
+                    `;
+                }
+            }
+            gradesContainer.innerHTML = html || `<div class="opacity-60 text-xs text-center py-2">لا توجد درجات جودة إضافية مفعلة لهذا العطر.</div>`;
+            switchView('admin-edit-kg-view');
+        }
+
+        async function saveKgPerfumeEdit(e) {
+            e.preventDefault();
+            const id = parseInt(document.getElementById('edit-kg-id').value);
+            const baseKgPrice = parseFloat(document.getElementById('edit-kg-base-price').value) || 12000;
+            const p = perfumesList.find(item => item.id === id);
+            if(!p) return;
+
+            let updatedGrades = p.grades || {};
+            for(let i=1; i<=10; i++) {
+                const gKey = `x${i}`;
+                const inputPrice = document.querySelector(`input[name="grade-kg-price-${gKey}"]`);
+                if(inputPrice && updatedGrades[gKey]) {
+                    updatedGrades[gKey].kgPrice = parseFloat(inputPrice.value) || baseKgPrice;
+                }
+            }
+
+            if (supabaseClient) {
+                try {
+                    const { error } = await supabaseClient.from('amateur_perfumes').update({ base_kg_price: baseKgPrice, grades: updatedGrades }).eq('id', id);
+                    if (error) throw error;
+                } catch (err) { alert("خطأ: " + err.message); return; }
+            }
+            showToast(translations[currentLang].successToast);
+            openAdminDashboard(); await syncPerfumesFromCloud();
+        }
+
+        function showToast(m) {
+            const t = document.getElementById('toast'); const msg = document.getElementById('toast-msg');
+            if(!t || !msg) return; msg.textContent = m;
+            t.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => t.classList.add('translate-y-20', 'opacity-0'), 3000);
+        }
+
+        applyTheme(); setLanguage(currentLang); updateAdminHeaderButton(); syncPerfumesFromCloud();
+    </script>
+</body>
+</html>
